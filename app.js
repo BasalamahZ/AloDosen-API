@@ -30,6 +30,6 @@ app.use("/api/conversation", conversationRoute);
 app.use("/api/message", messageRoute);
 
 // Start Server
-app.listen(port, () => {
+app.listen(process.env.PORT || 5000, () => {
   console.log(`Server Running at http://localhost:${port}`);
 });
