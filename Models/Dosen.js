@@ -12,6 +12,18 @@ const DosenSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
+  profil: {
+    type: String,
+  },
+  lokasiJadwal: {
+    type: Array,
+  },
+  topik: {
+    type: Array,
+  },
+  pendidikan: {
+    type: Array,
+  },
   universitas: {
     type: String,
   },
@@ -25,13 +37,10 @@ const DosenSchema = mongoose.Schema({
     type: String,
   },
   noTelp: {
-    type: String,
-  },
-  topik: {
-    type: String,
+    type: Number,
   },
   ulasan: {
-    type: String,
+    type: Array,
   },
   tarif: {
     type: String,

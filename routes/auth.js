@@ -14,6 +14,7 @@ router.post(
     check("phoneNumber", "Mobile number should contains 11-13 digits").isLength(
       { min: 11, max: 13 }
     ),
+    check("phoneNumber", "Mobile number containt only number").isNumeric(),
   ],
   async (req, res) => {
     try {
