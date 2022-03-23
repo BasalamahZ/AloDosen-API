@@ -9,6 +9,7 @@ const authRoute = require("./routes/auth");
 const dosenRoute = require("./routes/dosen");
 const conversationRoute = require("./routes/conversation");
 const messageRoute = require("./routes/message");
+const paymentRoute = require("./routes/payment");
 
 // Middlewares
 app.use(cors());
@@ -28,6 +29,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/dosen", dosenRoute);
 app.use("/api/conversation", conversationRoute);
 app.use("/api/message", messageRoute);
+app.use("/api/payment", paymentRoute);
 
 // Start Server
 app.listen(port, () => {
