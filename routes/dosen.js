@@ -55,7 +55,18 @@ router.get("/", async (req, res) => {
   const lokasi = req.query.loc;
   try {
     let data;
-    if (namaLengkap) {
+    if (namaLengkap && lokasi) {
+      data = await Dosen.find({
+        "namaLengkap": {
+          "$regex": namaLengkap,
+          "$options": "i",
+        },
+        "lokasi": {
+          "$regex": lokasi,
+          "$options": "i",
+        },
+      });
+    } else if (namaLengkap) {
       data = await Dosen.find({
         "namaLengkap": {
           "$regex": namaLengkap,

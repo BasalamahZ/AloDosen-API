@@ -29,6 +29,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/dosen", dosenRoute);
 app.use("/api/conversation", conversationRoute);
 app.use("/api/message", messageRoute);
+app.use("/api", paymentRoute);
 
 // Start Server
 app.listen(port, () => {
