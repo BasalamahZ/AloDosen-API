@@ -2,10 +2,7 @@ const mongoose = require("mongoose");
 
 const PaymentSchema = new mongoose.Schema(
   {
-    dosenId: {
-      type: String,
-    },
-    name: {
+    userId: {
       type: String,
     },
     responseMidtrans: {

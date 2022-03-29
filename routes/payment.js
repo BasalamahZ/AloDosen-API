@@ -31,7 +31,7 @@ router.post("/payment", async (req, res) => {
     .then(chargeResponse => {
       let dataOrder = {
         dosenId: req.body.dosenId,
-        name: req.body.name,
+        userId: req.body.userId,
         responseMidtrans: chargeResponse,
       };
       Payment.create(dataOrder)
@@ -60,33 +60,24 @@ router.post("/payment", async (req, res) => {
 });
 
 router.post("/notifikasi", function (req, res) {
-  apiClient.transaction.notification(req.body).then(statusResponse => {
+  coreApi.transaction.notification(req.body).then(statusResponse => {
     let orderId = statusResponse.order_id;
-    let transactionStatus = statusResponse.transaction_status;
-    let fraudStatus = statusResponse.fraud_status;
-
-    console.log(
-      `Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`
-    );
-    // Sample transactionStatus handling logic
-
-    if (transactionStatus == "capture") {
-      // capture only applies to card transaction, which you need to check for the fraudStatus
-      if (fraudStatus == "challenge") {
-        // TODO set transaction status on your databaase to 'challenge'
-      } else if (fraudStatus == "accept") {
-        // TODO set transaction status on your databaase to 'success'
-      }
-    } else if (transactionStatus == "settlement") {
-      // TODO set transaction status on your databaase to 'success'
-    } else if (transactionStatus == "deny") {
-      // TODO you can ignore 'deny', because most of the time it allows payment retries
-      // and later can become success
-    } else if (transactionStatus == "cancel" || transactionStatus == "expire") {
-      // TODO set transaction status on your databaase to 'failure'
-    } else if (transactionStatus == "pending") {
-      // TODO set transaction status on your databaase to 'pending' / waiting payment
-    }
+    let responseMidtrans = statusResponse;
+    Payment.updateMany({ responseMidtrans }, { id: orderId })
+      .then(() => {
+        res.json({
+          status: true,
+          pesan: "Berhasil Notifikasi",
+          data: [],
+        });
+      })
+      .catch(err => {
+        res.status(500).json({
+          status: false,
+          pesan: "Gagal Notifikasi: " + err.message,
+          data: [],
+        });
+      });
   });
 });
 
