@@ -28,13 +28,13 @@ router.post(
         password: hashedPass,
       });
       if (!errors.isEmpty()) {
-        res.status(400).send({
+        return res.status(400).send({
           success: false,
           message: errors,
         });
       } else {
         const user = await newUser.save();
-        res.status(200).send({
+        return res.status(200).send({
           success: true,
           message: "success",
           data: {

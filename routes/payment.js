@@ -1,13 +1,15 @@
 const router = require("express").Router();
 const Payment = require("../Models/Payment");
 const midtransClient = require("midtrans-client");
+
 // Create Core API instance
 let coreApi = new midtransClient.CoreApi({
   isProduction: false,
   serverKey: "SB-Mid-server-KJhF1EBlbLFpuVHflMr2DxTm",
   clientKey: "SB-Mid-client-dyrxC4AokmQVl_8E",
 });
-router.get("/", async (req, res) => {
+
+router.get("/payment", async (req, res) => {
   try {
     const data = await Payment.find();
     res.status(200).send({
@@ -23,60 +25,39 @@ router.get("/", async (req, res) => {
   }
 });
 
-// router.post("/payment", async (req, res) => {
-  // const chargeResponse = await coreApi.charge(req.body){
-  //   let dataOrder = {
-  //     dosenId: req.body.dosenId,
-  //     name: req.body.name,
-  //     responseMidtrans: chargeResponse,
-  //   }
-  //   const newPayment = new Payment(dataOrder);
-  //   try {
-  //     const savedPayment = await newPayment.save();
-  //     res.status(200).send({
-  //       success: true,
-  //       message: "Success",
-  //       data: savedPayment,
-  //     });
-  //   } catch (err) {
-  //     res.status(500).send({
-  //       success: false,
-  //       message: err,
-  //     });
-  //   }
-  // }
-  // });
-  // coreApi.charge(req.body)
-  //   .then(chargeResponse => {
-  //     let dataOrder = {
-  //       dosenId: req.body.dosenId,
-  //       name: req.body.name,
-  //       responseMidtrans: chargeResponse,
-  //     };
-  //     Payment.create(dataOrder)
-  //       .then(data => {
-  //         res.json({
-  //           status: true,
-  //           message: "success",
-  //           data: data,
-  //         });
-  //       })
-  //       .catch(err => {
-  //         res.json({
-  //           status: false,
-  //           message: err.message,
-  //           data: [],
-  //         });
-  //       });
-  //   })
-  //   .catch(e => {
-  //     res.json({
-  //       status: false,
-  //       message: e.message,
-  //       data: [],
-  //     });
-  //   });
-
+router.post("/payment", async (req, res) => {
+  coreApi
+    .charge(req.body)
+    .then(chargeResponse => {
+      let dataOrder = {
+        dosenId: req.body.dosenId,
+        name: req.body.name,
+        responseMidtrans: chargeResponse,
+      };
+      Payment.create(dataOrder)
+        .then(data => {
+          res.json({
+            status: true,
+            message: "success",
+            data: data,
+          });
+        })
+        .catch(err => {
+          res.json({
+            status: false,
+            message: err.message,
+            data: [],
+          });
+        });
+    })
+    .catch(e => {
+      res.json({
+        status: false,
+        message: e.message,
+        data: [],
+      });
+    });
+});
 
 router.post("/notifikasi", function (req, res) {
   apiClient.transaction.notification(req.body).then(statusResponse => {
@@ -87,7 +68,6 @@ router.post("/notifikasi", function (req, res) {
     console.log(
       `Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`
     );
-
     // Sample transactionStatus handling logic
 
     if (transactionStatus == "capture") {
