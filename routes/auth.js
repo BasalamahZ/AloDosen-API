@@ -55,18 +55,20 @@ router.post(
 router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
-    !user &&
-      res.status(400).send({
+    if (!user) {
+      return res.status(400).send({
         success: false,
         message: "Something Wrong",
       });
-
+    }
+      
     const validate = await bcrypt.compare(req.body.password, user.password);
-    !validate &&
-      res.status(400).send({
+    if (!validate){
+      return res.status(400).send({
         success: false,
         message: "Something Wrong",
       });
+    }
 
     const token = jwt.sign(
       {
@@ -75,7 +77,7 @@ router.post("/login", async (req, res) => {
       process.env.JWT,
       { expiresIn: "3d" }
     );
-    res.status(200).send({
+    return res.status(200).send({
       success: true,
       message: "success",
       data: {
@@ -84,7 +86,7 @@ router.post("/login", async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).send({
+    return res.status(500).send({
       success: false,
       message: err,
     });
