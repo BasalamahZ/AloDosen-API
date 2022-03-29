@@ -49,7 +49,7 @@ router.post("/payment", async (req, res) => {
 
 router.post("/notifikasi", async (req, res) => {
   try {
-    statusResponse = coreApi.transaction.notification(req.body);
+    statusResponse = await coreApi.transaction.notification(req.body);
     let orderId = statusResponse.order_id;
     let responseMidtrans = statusResponse;
     const data = await Payment.updateMany(
@@ -69,43 +69,24 @@ router.post("/notifikasi", async (req, res) => {
   }
 });
 
-router.post("/status/:order_id", async (req, res) => {
-  try {
-    statusResponse = coreApi.transaction.notification(req.params.order_id);
+router.get("/status/:order_id", function (req, res) {
+  coreApi.transaction.status(req.params.order_id).then(statusResponse => {
     let responseMidtrans = statusResponse;
-    const data = await Payment.updateMany({ responseMidtrans }, { id: req.params.order_id })
-    res.status(200).send({
-      success: true,
-      message: "Success",
-      data: data,
-    });
-  } catch (err) {
-    res.status(500).send({
-      success: false,
-      message: err,
-    });
-  }
+    Payment.updateMany({ responseMidtrans }, { id: req.params.order_id })
+      .then(() => {
+        res.status(200).send({
+          success: true,
+          message: "Success",
+          data: statusResponse,
+        });
+      })
+      .catch(err => {
+        res.status(500).send({
+          success: false,
+          message: err,
+        });
+      });
+  });
 });
-
-// router.get("/status/:order_id", function (req, res, next) {
-//   coreApi.transaction.status(req.params.order_id).then(statusResponse => {
-//     let responseMidtrans = statusResponse;
-//     Payment.updateMany({ responseMidtrans }, { id: req.params.order_id })
-//       .then(() => {
-//         res.json({
-//           status: true,
-//           pesan: "Berhasil cek status",
-//           data: statusResponse,
-//         });
-//       })
-//       .catch(err => {
-//         res.json({
-//           status: false,
-//           pesan: "Gagal cek status: " + err.message,
-//           data: [],
-//         });
-//       });
-//   });
-// });
 
 module.exports = router;
