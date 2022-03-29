@@ -26,59 +26,86 @@ router.get("/payment", async (req, res) => {
 });
 
 router.post("/payment", async (req, res) => {
-  coreApi
-    .charge(req.body)
-    .then(chargeResponse => {
-      let dataOrder = {
-        dosenId: req.body.dosenId,
-        userId: req.body.userId,
-        responseMidtrans: chargeResponse,
-      };
-      Payment.create(dataOrder)
-        .then(data => {
-          res.json({
-            status: true,
-            message: "success",
-            data: data,
-          });
-        })
-        .catch(err => {
-          res.json({
-            status: false,
-            message: err.message,
-            data: [],
-          });
-        });
-    })
-    .catch(e => {
-      res.json({
-        status: false,
-        message: e.message,
-        data: [],
-      });
+  try {
+    chargeResponse = await coreApi.charge(req.body);
+    let dataOrder = {
+      dosenId: req.body.dosenId,
+      userId: req.body.userId,
+      responseMidtrans: chargeResponse,
+    };
+    const data = await Payment.create(dataOrder);
+    res.status(200).send({
+      success: true,
+      message: "Success",
+      data: data,
     });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: err,
+    });
+  }
 });
 
-router.post("/notifikasi", function (req, res) {
-  coreApi.transaction.notification(req.body).then(statusResponse => {
+router.post("/notifikasi", async (req, res) => {
+  try {
+    statusResponse = coreApi.transaction.notification(req.body);
     let orderId = statusResponse.order_id;
     let responseMidtrans = statusResponse;
-    Payment.updateMany({ responseMidtrans }, { id: orderId })
-      .then(() => {
-        res.json({
-          status: true,
-          pesan: "Berhasil Notifikasi",
-          data: [],
-        });
-      })
-      .catch(err => {
-        res.status(500).json({
-          status: false,
-          pesan: "Gagal Notifikasi: " + err.message,
-          data: [],
-        });
-      });
-  });
+    const data = await Payment.updateMany(
+      { responseMidtrans },
+      { id: orderId }
+    );
+    res.status(200).send({
+      success: true,
+      message: "Success",
+      data: data,
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: err,
+    });
+  }
 });
+
+router.post("/status/:order_id", async (req, res) => {
+  try {
+    statusResponse = coreApi.transaction.notification(req.params.order_id);
+    let responseMidtrans = statusResponse;
+    const data = await Payment.updateMany({ responseMidtrans }, { id: req.params.order_id })
+    res.status(200).send({
+      success: true,
+      message: "Success",
+      data: data,
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: err,
+    });
+  }
+});
+
+// router.get("/status/:order_id", function (req, res, next) {
+//   coreApi.transaction.status(req.params.order_id).then(statusResponse => {
+//     let responseMidtrans = statusResponse;
+//     Payment.updateMany({ responseMidtrans }, { id: req.params.order_id })
+//       .then(() => {
+//         res.json({
+//           status: true,
+//           pesan: "Berhasil cek status",
+//           data: statusResponse,
+//         });
+//       })
+//       .catch(err => {
+//         res.json({
+//           status: false,
+//           pesan: "Gagal cek status: " + err.message,
+//           data: [],
+//         });
+//       });
+//   });
+// });
 
 module.exports = router;
