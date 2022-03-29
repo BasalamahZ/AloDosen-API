@@ -25,6 +25,22 @@ router.get("/payment", async (req, res) => {
   }
 });
 
+router.get("/status/:userId", async (req, res) => {
+  try {
+    const data = await Payment.find({userId: req.params.userId});
+    res.status(200).send({
+      success: true,
+      message: "Success",
+      data: data,
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: err,
+    });
+  }
+});
+
 router.post("/payment", async (req, res) => {
   try {
     chargeResponse = await coreApi.charge(req.body);
