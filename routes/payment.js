@@ -27,7 +27,7 @@ router.get("/payment", async (req, res) => {
 
 router.get("/status/:userId", async (req, res) => {
   try {
-    const data = await Payment.find({ userId: req.params.userId });
+    const data = await Payment.find({userId: req.params.userId});
     res.status(200).send({
       success: true,
       message: "Success",
@@ -63,28 +63,29 @@ router.post("/payment", async (req, res) => {
   }
 });
 
-router.post("/notifikasi", function (req, res) {
-  coreApi.transaction.notification(req.body).then(statusResponse => {
+router.post("/notifikasi", async (req, res) => {
+  try {
+    statusResponse = await coreApi.transaction.notification(req.body);
     let orderId = statusResponse.order_id;
     let responseMidtrans = statusResponse;
-    Payment.updateMany({ responseMidtrans }, { id: orderId })
-      .then(() => {
-        res.status(200).send({
-          success: true,
-          message: "Success",
-          data: statusResponse,
-        });
-      })
-      .catch(err => {
-        res.status(500).send({
-          success: false,
-          message: err,
-        });
-      });
-  });
+    const data = await Payment.updateMany(
+      { responseMidtrans },
+      { id: orderId }
+    );
+    res.status(200).send({
+      success: true,
+      message: "Success",
+      data: data,
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: err,
+    });
+  }
 });
 
-router.get("/status/:order_id", function (req, res) {
+router.get("/payment/:order_id", function (req, res) {
   coreApi.transaction.status(req.params.order_id).then(statusResponse => {
     let responseMidtrans = statusResponse;
     Payment.updateMany({ responseMidtrans }, { id: req.params.order_id })
