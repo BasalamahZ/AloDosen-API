@@ -50,4 +50,12 @@ const DosenSchema = mongoose.Schema({
   },
 });
 
+// [
+//   {
+//     hari: String,
+//     lokasi: String,
+//     jam: Array      
+//   }
+// ],
+
 module.exports = mongoose.model("Dosen", DosenSchema);
