@@ -21,7 +21,7 @@ router.get("/payment", async (req, res) => {
         hari: item.hari,
         jam: item.jam,
         lokasi: item.lokasi,
-        responseMidtrans: JSON.parse(item.responseMidtrans),
+        responseMidtrans: item.responseMidtrans,
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
       };
@@ -72,7 +72,7 @@ router.get("/payment/history/:userId", async (req, res) => {
         hari: item.hari,
         jam: item.jam,
         lokasi: item.lokasi,
-        responseMidtrans: JSON.parse(item.responseMidtrans),
+        responseMidtrans: item.responseMidtrans,
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
       };
@@ -100,7 +100,7 @@ router.post("/payment", async (req, res) => {
       hari: req.body.hari,
       jam: req.body.jam,
       lokasi: req.body.lokasi,
-      responseMidtrans: JSON.stringify(chargeResponse),
+      responseMidtrans: chargeResponse,
     };
     const data = await Payment.create(dataOrder);
     res.status(200).send({
@@ -119,7 +119,8 @@ router.post("/payment", async (req, res) => {
 router.post("/notifikasi", function (req, res) {
   coreApi.transaction.notification(req.body).then(statusResponse => {
     let orderId = statusResponse.order_id;
-    let responseMidtrans = JSON.stringify(statusResponse);
+    let responseMidtrans = statusResponse;
+    console.log(object);
     Payment.updateMany(
       { id: orderId },
       {
@@ -150,7 +151,7 @@ router.post("/notifikasi", function (req, res) {
 
 router.post("/status/:order_id", function (req, res) {
   coreApi.transaction.status(req.params.order_id).then(statusResponse => {
-    let responseMidtrans = JSON.stringify(statusResponse);
+    let responseMidtrans = statusResponse;
     Payment.updateMany(
       { id: req.body.order_id },
       {

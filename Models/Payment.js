@@ -9,7 +9,7 @@ const PaymentSchema = new mongoose.Schema(
       type: String,
     },
     responseMidtrans: {
-      type: String,
+      type: JSON,
     },
     type: {
       type: String
