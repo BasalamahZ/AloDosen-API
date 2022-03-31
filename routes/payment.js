@@ -117,80 +117,32 @@ router.post("/payment", async (req, res) => {
 });
 
 router.post("/notifikasi", function (req, res) {
-  try {
-    coreApi.transaction.notification(req.body).then(statusResponse => {
-      let orderId = statusResponse.order_id;
-      let transactionStatus = statusResponse.transaction_status;
-      let fraudStatus = statusResponse.fraud_status;
-      let responseMidtrans = statusResponse;
-      // Payment.findOneAndUpdate(
-      //   { id: orderId },
-      //   {
-      //     $set: { responseMidtrans: statusResponse },
-      //   }
-      // )
-      if (transactionStatus == "capture") {
-        if (fraudStatus == "challenge") {
-          Payment.create({
-            order_id: orderId,
-            total_amount: statusResponse.gross_amount,
-            transaction_status: transactionStatus,
-          }).catch(err => {
-            next(err);
-          });
-          console.log("challenge");
-        } else if (fraudStatus == "accept") {
-          Payment.create({
-            order_id: orderId,
-            total_amount: statusResponse.gross_amount,
-            transaction_status: transactionStatus,
-          }).catch(err => {
-            next(err);
-          });
-          console.log("success");
-        }
-      } else if (transactionStatus == "settlement") {
-        Payment.create({
-          order_id: orderId,
-          total_amount: statusResponse.gross_amount,
-          transaction_status: transactionStatus,
-        }).catch(err => {
-          next(err);
-        });
-        console.log("success");
-        console.log("success");
-      } else if (
-        transactionStatus == "cancel" ||
-        transactionStatus == "deny" ||
-        transactionStatus == "expire"
-      ) {
-        Payment.create({
-          order_id: orderId,
-          total_amount: statusResponse.gross_amount,
-          transaction_status: transactionStatus,
-        }).catch(err => {
-          next(err);
-        });
-        console.log("failure");
-      } else if (transactionStatus == "pending") {
-        Payment.create({
-          order_id: orderId,
-          total_amount: statusResponse.gross_amount,
-          transaction_status: transactionStatus,
-        }).catch(err => {
-          next(err);
-        });
-        console.log("pending");
+  coreApi.transaction.notification(req.body).then(statusResponse => {
+    let orderId = statusResponse.order_id;
+    let transactionStatus = statusResponse.transaction_status;
+    let fraudStatus = statusResponse.fraud_status;
+    let responseMidtrans = statusResponse;
+    Payment.findOneAndUpdate(
+      {
+        order_id: orderId,
+        total_amount: statusResponse.gross_amount,
+        transaction_status: transactionStatus,
       }
-    });
-    res.status(200).json({
-      code: 200,
-      status: "OK",
-      data: null,
-    });
-  } catch (error) {
-    next(err);
-  }
+    )
+      .then(() => {
+        res.status(200).send({
+          success: true,
+          message: "Success",
+          data: [],
+        });
+      })
+      .catch(err => {
+        res.status(500).send({
+          success: false,
+          message: err,
+        });
+      });
+  });
 });
 
 router.post("/status/:order_id", function (req, res) {
