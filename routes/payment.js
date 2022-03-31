@@ -72,7 +72,7 @@ router.get("/payment/history/:userId", async (req, res) => {
         hari: item.hari,
         jam: item.jam,
         lokasi: item.lokasi,
-        responseMidtrans: JSON.parse(item.responseMidtrans),
+        responseMidtrans: item.responseMidtrans,
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
       };
