@@ -61,9 +61,9 @@ router.post("/login", async (req, res) => {
         message: "Something Wrong",
       });
     }
-      
+
     const validate = await bcrypt.compare(req.body.password, user.password);
-    if (!validate){
+    if (!validate) {
       return res.status(400).send({
         success: false,
         message: "Something Wrong",

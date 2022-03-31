@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const Dosen = require("../Models/Dosen");
 
-// get spesific dosen
+// get dosen by id
 router.get("/:id", async (req, res) => {
   try {
     const data = await Dosen.findById(req.params.id);
@@ -18,7 +18,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// post dosen
 router.post("/", async (req, res) => {
   try {
     const data = new Dosen(req.body);
@@ -32,7 +31,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// get dosen by name or location
+//get all dosen
 router.get("/", async (req, res) => {
   const namaLengkap = req.query.name;
   const lokasi = req.query.loc;
@@ -40,27 +39,27 @@ router.get("/", async (req, res) => {
     let data;
     if (namaLengkap && lokasi) {
       data = await Dosen.find({
-        "namaLengkap": {
-          "$regex": namaLengkap,
-          "$options": "i",
+        namaLengkap: {
+          $regex: namaLengkap,
+          $options: "i",
         },
-        "lokasi": {
-          "$regex": lokasi,
-          "$options": "i",
+        lokasi: {
+          $regex: lokasi,
+          $options: "i",
         },
       });
     } else if (namaLengkap) {
       data = await Dosen.find({
-        "namaLengkap": {
-          "$regex": namaLengkap,
-          "$options": "i",
+        namaLengkap: {
+          $regex: namaLengkap,
+          $options: "i",
         },
       });
     } else if (lokasi) {
       data = await Dosen.find({
-        "lokasi": {
-          "$regex": lokasi,
-          "$options": "i",
+        lokasi: {
+          $regex: lokasi,
+          $options: "i",
         },
       });
     } else {
@@ -78,4 +77,5 @@ router.get("/", async (req, res) => {
     });
   }
 });
+
 module.exports = router;

@@ -17,11 +17,12 @@ router.get("/payment", async (req, res) => {
         id: item._id,
         userId: item.userId,
         dosenId: item.dosenId,
+        order_id: item.order_id,
         type: item.type,
         hari: item.hari,
         jam: item.jam,
         lokasi: item.lokasi,
-        responseMidtrans: item.responseMidtrans,
+        responseMidtrans: JSON.parse(item.responseMidtrans),
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
       };
@@ -68,6 +69,7 @@ router.get("/payment/history/:userId", async (req, res) => {
         id: item._id,
         userId: item.userId,
         dosenId: item.dosenId,
+        order_id: item.order_id,
         type: item.type,
         hari: item.hari,
         jam: item.jam,
@@ -125,32 +127,7 @@ router.post("/notifikasi", function (req, res) {
       { order_id: orderId },
       {
         responseMidtrans: responseMidtrans,
-      },
-    )
-      .then(() => {
-        res.status(200).send({
-          success: true,
-          message: "Success",
-          data: [],
-        });
-      })
-      .catch(err => {
-        res.status(500).send({
-          success: false,
-          message: err,
-        });
-      });
-  });
-});
-
-router.post("/status/:order_id", function (req, res) {
-  coreApi.transaction.status(req.params.order_id).then(statusResponse => {
-    let responseMidtrans = JSON.stringify(statusResponse);
-    Payment.findOneAndUpdate(
-      { id: req.body.order_id },
-      {
-        responseMidtrans: responseMidtrans,
-      },
+      }
     )
       .then(() => {
         res.status(200).send({

@@ -14,10 +14,10 @@ const verifyToken = (req, res, next) => {
     });
   } else {
     return res.status(403).send({
-          success: false,
-          message: "you are not authenticated",
-        });
-      }
+      success: false,
+      message: "you are not authenticated",
+    });
+  }
 };
 
 module.exports = verifyToken;

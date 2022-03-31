@@ -15,17 +15,17 @@ const PaymentSchema = new mongoose.Schema(
       type: String,
     },
     type: {
-      type: String
+      type: String,
     },
     hari: {
-      type: String
+      type: String,
     },
     jam: {
-      type: String
+      type: String,
     },
     lokasi: {
-      type: String
-    }
+      type: String,
+    },
   },
   { timestamps: true }
 );

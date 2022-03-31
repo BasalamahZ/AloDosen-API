@@ -19,8 +19,8 @@ const DosenSchema = mongoose.Schema({
     {
       hari: String,
       lokasi: String,
-      jam: String      
-    }
+      jam: String,
+    },
   ],
   topik: {
     type: Array,
@@ -53,7 +53,5 @@ const DosenSchema = mongoose.Schema({
     type: String,
   },
 });
-
-
 
 module.exports = mongoose.model("Dosen", DosenSchema);
