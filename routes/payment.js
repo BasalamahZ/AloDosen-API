@@ -121,7 +121,6 @@ router.post("/notifikasi", function (req, res) {
     let orderId = statusResponse.order_id;
     let transactions = statusResponse.transaction_status;
     let responseMidtrans = statusResponse;
-    console.log(orderId);
     Payment.findOneAndUpdate(
       { _id: req.body._id },
       { $set: { responseMidtrans: responseMidtrans } }
