@@ -120,7 +120,7 @@ router.post("/notifikasi", function (req, res) {
   coreApi.transaction.notification(req.body).then(statusResponse => {
     let orderId = statusResponse.order_id;
     let responseMidtrans = JSON.stringify(statusResponse);
-    Payment.findOneAndUpdate(
+    Payment.updateOne(
       { id: orderId },
       {
         responseMidtrans: responseMidtrans,
@@ -144,22 +144,18 @@ router.post("/notifikasi", function (req, res) {
 
 router.post("/status/:order_id", function (req, res) {
   coreApi.transaction.status(req.params.order_id).then(statusResponse => {
-    let responseMidtrans = statusResponse;
-    Payment.updateOne(
+    let responseMidtrans = JSON.stringify(statusResponse);
+    Payment.findOneAndUpdate(
       { id: req.body.order_id },
       {
-        $set: {
-          dosenId: req.body.dosenId,
-          userId: req.body.userId,
-          responseMidtrans: responseMidtrans,
-        },
-      }
+        responseMidtrans: responseMidtrans,
+      },
     )
       .then(() => {
         res.status(200).send({
           success: true,
           message: "Success",
-          data: statusResponse,
+          data: [],
         });
       })
       .catch(err => {
