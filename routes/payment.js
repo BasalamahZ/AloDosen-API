@@ -3,7 +3,6 @@ const Payment = require("../Models/Payment");
 const Dosen = require("../Models/Dosen");
 const midtransClient = require("midtrans-client");
 
-// Create Core API instance
 let coreApi = new midtransClient.CoreApi({
   isProduction: false,
   serverKey: "SB-Mid-server-KJhF1EBlbLFpuVHflMr2DxTm",
