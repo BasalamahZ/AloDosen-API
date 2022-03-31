@@ -123,13 +123,9 @@ router.post("/notifikasi", function (req, res) {
     Payment.updateOne(
       { id: orderId },
       {
-        dosenId: req.body.dosenId,
-        userId: req.body.userId,
-        type: req.body.type,
-        hari: req.body.hari,
-        jam: req.body.jam,
-        lokasi: req.body.lokasi,
-        responseMidtrans: responseMidtrans,
+        $set: {
+          responseMidtrans: responseMidtrans,
+        },
       }
     )
       .then(() => {
