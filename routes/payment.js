@@ -123,8 +123,8 @@ router.post("/notifikasi", function (req, res) {
     let fraudStatus = statusResponse.fraud_status;
     let responseMidtrans = statusResponse;
     Payment.findOneAndUpdate(
+      {order_id: orderId},
       {
-        order_id: orderId,
         total_amount: statusResponse.gross_amount,
         transaction_status: transactionStatus,
       }
