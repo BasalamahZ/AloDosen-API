@@ -120,7 +120,7 @@ router.post("/notifikasi", function (req, res) {
   coreApi.transaction.notification(req.body).then(statusResponse => {
     let orderId = statusResponse.order_id;
     let responseMidtrans = JSON.stringify(statusResponse);
-    Payment.findOneAndUpdate(
+    Payment.updateOne(
       { id: orderId },
       {
         responseMidtrans: responseMidtrans,
