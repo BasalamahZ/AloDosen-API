@@ -119,16 +119,13 @@ router.post("/payment", async (req, res) => {
 router.post("/notifikasi", function (req, res) {
   coreApi.transaction.notification(req.body).then(statusResponse => {
     let orderId = statusResponse.order_id;
-    let transactionStatus = statusResponse.transaction_status;
-    let fraudStatus = statusResponse.fraud_status;
-    let responseMidtrans = statusResponse;
+    let transactions = statusResponse.transaction_status;
+    let responseMidtrans = JSON.stringify(statusResponse);
     Payment.findOneAndUpdate(
-      {order_id: orderId},
-      {
-        total_amount: statusResponse.gross_amount,
-        transaction_status: transactionStatus,
-      }
-    )
+      { _id: req.body._id },
+      { $set: { "responseMidtrans.transaction_status": "settlement" } }
+    );
+    WriteResult({ nMatched: 1, nUpserted: 0, nModified: 1 })
       .then(() => {
         res.status(200).send({
           success: true,
