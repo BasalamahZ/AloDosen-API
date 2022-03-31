@@ -12,20 +12,41 @@ let coreApi = new midtransClient.CoreApi({
 router.get("/payment", async (req, res) => {
   try {
     const data = await Payment.find();
-    let tampilData = data.map(item=>{
+    let tampilData = data.map(item => {
       return {
-      id:item._id,
-      userId:item.userId,
-      dosenId:item.dosenId,
-      responseMidtrans:JSON.parse(item.responseMidtrans),
-      createdAt:item.createdAt,
-      updatedAt:item.updatedAt
-      }
-      });
+        id: item._id,
+        userId: item.userId,
+        dosenId: item.dosenId,
+        type: item.type,
+        hari: item.hari,
+        jam: item.jam,
+        lokasi: item.lokasi,
+        responseMidtrans: JSON.parse(item.responseMidtrans),
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+      };
+    });
     res.status(200).send({
       success: true,
       message: "Success",
       data: tampilData,
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: err,
+    });
+  }
+});
+
+router.get("/payment/:_id", async (req, res) => {
+  try {
+    const data = await Payment.findById(req.params._id);
+
+    res.status(200).send({
+      success: true,
+      message: "Success",
+      data: data,
     });
   } catch (err) {
     res.status(500).send({
@@ -42,16 +63,20 @@ router.get("/payment/history/:userId", async (req, res) => {
       model: Dosen,
       select: { namaLengkap: 1, fakultas: 1, image: 1, lokasiJadwal: 1 },
     });
-    let tampilData = data.map(item=>{
+    let tampilData = data.map(item => {
       return {
-      id:item._id,
-      userId:item.userId,
-      dosenId:item.dosenId,
-      responseMidtrans:JSON.parse(item.responseMidtrans),
-      createdAt:item.createdAt,
-      updatedAt:item.updatedAt
-      }
-      });
+        id: item._id,
+        userId: item.userId,
+        dosenId: item.dosenId,
+        type: item.type,
+        hari: item.hari,
+        jam: item.jam,
+        lokasi: item.lokasi,
+        responseMidtrans: JSON.parse(item.responseMidtrans),
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+      };
+    });
     res.status(200).send({
       success: true,
       message: "Success",
@@ -71,6 +96,10 @@ router.post("/payment", async (req, res) => {
     let dataOrder = {
       dosenId: req.body.dosenId,
       userId: req.body.userId,
+      type: req.body.type,
+      hari: req.body.hari,
+      jam: req.body.jam,
+      lokasi: req.body.lokasi,
       responseMidtrans: JSON.stringify(chargeResponse),
     };
     const data = await Payment.create(dataOrder);
@@ -91,11 +120,18 @@ router.post("/notifikasi", function (req, res) {
   coreApi.transaction.notification(req.body).then(statusResponse => {
     let orderId = statusResponse.order_id;
     let responseMidtrans = JSON.stringify(statusResponse);
-    Payment.updateMany({ id: orderId },{ 
-      dosenId: req.body.dosenId,
-      userId: req.body.userId,
-      responseMidtrans: responseMidtrans,
-    })
+    Payment.updateMany(
+      { id: orderId },
+      {
+        dosenId: req.body.dosenId,
+        userId: req.body.userId,
+        type: req.body.type,
+        hari: req.body.hari,
+        jam: req.body.jam,
+        lokasi: req.body.lokasi,
+        responseMidtrans: responseMidtrans,
+      }
+    )
       .then(() => {
         res.status(200).send({
           success: true,
@@ -111,35 +147,18 @@ router.post("/notifikasi", function (req, res) {
       });
   });
 });
-//   try {
-//     statusResponse = await coreApi.transaction.notification(req.body);
-//     let orderId = statusResponse.order_id;
-//     let responseMidtrans = JSON.stringify(statusResponse);;
-//     const data = await Payment.updateMany(
-//       { responseMidtrans },
-//       { id: orderId }
-//     );
-//     res.status(200).send({
-//       success: true,
-//       message: "Success",
-//       data: data,
-//     });
-//   } catch (err) {
-//     res.status(500).send({
-//       success: false,
-//       message: err,
-//     });
-//   }
-// });
 
 router.post("/status/:order_id", function (req, res) {
   coreApi.transaction.status(req.params.order_id).then(statusResponse => {
     let responseMidtrans = JSON.stringify(statusResponse);
-    Payment.updateMany({ id: req.body.order_id },{ 
-      dosenId: req.body.dosenId,
-      userId: req.body.userId,
-      responseMidtrans: responseMidtrans,
-    })
+    Payment.updateMany(
+      { id: req.body.order_id },
+      {
+        dosenId: req.body.dosenId,
+        userId: req.body.userId,
+        responseMidtrans: responseMidtrans,
+      }
+    )
       .then(() => {
         res.status(200).send({
           success: true,
@@ -155,7 +174,6 @@ router.post("/status/:order_id", function (req, res) {
       });
   });
 });
-
 
 router.delete("/payment/:_id", async (req, res) => {
   try {

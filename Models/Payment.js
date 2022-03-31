@@ -11,6 +11,18 @@ const PaymentSchema = new mongoose.Schema(
     responseMidtrans: {
       type: String,
     },
+    type: {
+      type: String
+    },
+    hari: {
+      type: String
+    },
+    jam: {
+      type: String
+    },
+    lokasi: {
+      type: String
+    }
   },
   { timestamps: true }
 );
