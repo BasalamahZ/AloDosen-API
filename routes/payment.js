@@ -93,7 +93,7 @@ router.post("/notifikasi", async (req, res) => {
     statusResponse = await coreApi.transaction.notification(req.body);
     let orderId = statusResponse.order_id;
     let responseMidtrans = JSON.stringify(statusResponse);;
-    const data = await Payment.replaceOne(
+    const data = await Payment.updateMany(
       { responseMidtrans },
       { id: orderId }
     );
@@ -112,7 +112,6 @@ router.post("/notifikasi", async (req, res) => {
 
 router.post("/status/:order_id", function (req, res) {
   coreApi.transaction.status(req.params.order_id).then(statusResponse => {
-    let orderId = statusResponse.order_id;
     let responseMidtrans = JSON.stringify(statusResponse);;
     console.log(responseMidtrans);
     Payment.updateMany({ id: req.body.order_id },{ 
