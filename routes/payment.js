@@ -120,7 +120,6 @@ router.post("/notifikasi", function (req, res) {
   coreApi.transaction.notification(req.body).then(statusResponse => {
     let orderId = statusResponse.order_id;
     let responseMidtrans = statusResponse;
-    console.log(object);
     Payment.updateMany(
       { id: orderId },
       {
