@@ -123,9 +123,7 @@ router.post("/notifikasi", function (req, res) {
     Payment.findOneAndUpdate(
       { id: orderId },
       {
-        $set: {
-          responseMidtrans: responseMidtrans,
-        },
+        responseMidtrans: responseMidtrans,
       }
     )
       .then(() => {
