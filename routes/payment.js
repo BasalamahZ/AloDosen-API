@@ -40,7 +40,7 @@ router.get("/payment/history/:userId", async (req, res) => {
     let data = await Payment.find({ userId: req.params.userId }).populate({
       path: "dosenId",
       model: Dosen,
-      select: { namaLengkap: 1, fakultas: 1, image: 1 },
+      select: { namaLengkap: 1, fakultas: 1, image: 1, lokasiJadwal: 1 },
     });
     let tampilData = data.map(item=>{
       return {
@@ -87,32 +87,54 @@ router.post("/payment", async (req, res) => {
   }
 });
 
-router.post("/notifikasi", async (req, res) => {
-  try {
-    statusResponse = await coreApi.transaction.notification(req.body);
+router.post("/notifikasi", function (req, res) {
+  coreApi.transaction.notification(req.body).then(statusResponse => {
     let orderId = statusResponse.order_id;
-    let responseMidtrans = JSON.stringify(statusResponse);;
-    const data = await Payment.updateMany(
-      { responseMidtrans },
-      { id: orderId }
-    );
-    res.status(200).send({
-      success: true,
-      message: "Success",
-      data: data,
-    });
-  } catch (err) {
-    res.status(500).send({
-      success: false,
-      message: err,
-    });
-  }
+    let responseMidtrans = JSON.stringify(statusResponse);
+    Payment.updateMany({ id: orderId },{ 
+      dosenId: req.body.dosenId,
+      userId: req.body.userId,
+      responseMidtrans: responseMidtrans,
+    })
+      .then(() => {
+        res.status(200).send({
+          success: true,
+          message: "Success",
+          data: [],
+        });
+      })
+      .catch(err => {
+        res.status(500).send({
+          success: false,
+          message: err,
+        });
+      });
+  });
 });
+//   try {
+//     statusResponse = await coreApi.transaction.notification(req.body);
+//     let orderId = statusResponse.order_id;
+//     let responseMidtrans = JSON.stringify(statusResponse);;
+//     const data = await Payment.updateMany(
+//       { responseMidtrans },
+//       { id: orderId }
+//     );
+//     res.status(200).send({
+//       success: true,
+//       message: "Success",
+//       data: data,
+//     });
+//   } catch (err) {
+//     res.status(500).send({
+//       success: false,
+//       message: err,
+//     });
+//   }
+// });
 
 router.post("/status/:order_id", function (req, res) {
   coreApi.transaction.status(req.params.order_id).then(statusResponse => {
-    let responseMidtrans = JSON.stringify(statusResponse);;
-    console.log(responseMidtrans);
+    let responseMidtrans = JSON.stringify(statusResponse);
     Payment.updateMany({ id: req.body.order_id },{ 
       dosenId: req.body.dosenId,
       userId: req.body.userId,
