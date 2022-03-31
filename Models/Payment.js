@@ -9,7 +9,7 @@ const PaymentSchema = new mongoose.Schema(
       type: String,
     },
     responseMidtrans: {
-      type: JSON,
+      type: String,
     },
   },
   { timestamps: true }
