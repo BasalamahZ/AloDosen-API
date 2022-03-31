@@ -96,6 +96,7 @@ router.post("/payment", async (req, res) => {
     let dataOrder = {
       dosenId: req.body.dosenId,
       userId: req.body.userId,
+      order_id: chargeResponse.order_id,
       type: req.body.type,
       hari: req.body.hari,
       jam: req.body.jam,

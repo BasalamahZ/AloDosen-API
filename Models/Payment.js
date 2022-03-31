@@ -11,6 +11,9 @@ const PaymentSchema = new mongoose.Schema(
     responseMidtrans: {
       type: String,
     },
+    order_id: {
+      type: String,
+    },
     type: {
       type: String
     },
