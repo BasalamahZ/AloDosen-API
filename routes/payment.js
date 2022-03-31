@@ -155,9 +155,11 @@ router.post("/status/:order_id", function (req, res) {
     Payment.updateMany(
       { id: req.body.order_id },
       {
-        dosenId: req.body.dosenId,
-        userId: req.body.userId,
-        responseMidtrans: responseMidtrans,
+        $set: {
+          dosenId: req.body.dosenId,
+          userId: req.body.userId,
+          responseMidtrans: responseMidtrans,
+        },
       }
     )
       .then(() => {
