@@ -119,18 +119,10 @@ router.post("/payment", async (req, res) => {
 router.post("/notifikasi", function (req, res) {
   coreApi.transaction.notification(req.body).then(statusResponse => {
     let orderId = statusResponse.order_id;
-    let responseMidtrans = statusResponse;
-    Payment.updateMany(
+    Payment.findOneAndReplace(
       { id: orderId },
-      {
-        dosenId: req.body.dosenId,
-        userId: req.body.userId,
-        type: req.body.type,
-        hari: req.body.hari,
-        jam: req.body.jam,
-        lokasi: req.body.lokasi,
-        responseMidtrans: responseMidtrans,
-      }
+      { responeMidtrans },
+      { responeMidtrans : statusResponse },
     )
       .then(() => {
         res.status(200).send({
