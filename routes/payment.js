@@ -100,7 +100,7 @@ router.post("/payment", async (req, res) => {
       hari: req.body.hari,
       jam: req.body.jam,
       lokasi: req.body.lokasi,
-      responseMidtrans: chargeResponse,
+      responseMidtrans: JSON.stringify(chargeResponse),
     };
     const data = await Payment.create(dataOrder);
     res.status(200).send({
@@ -119,7 +119,7 @@ router.post("/payment", async (req, res) => {
 router.post("/notifikasi", function (req, res) {
   coreApi.transaction.notification(req.body).then(statusResponse => {
     let orderId = statusResponse.order_id;
-    let responseMidtrans = statusResponse;
+    let responseMidtrans = JSON.stringify(statusResponse);
     Payment.updateOne(
       { id: orderId },
       {
