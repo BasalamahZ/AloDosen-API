@@ -121,10 +121,10 @@ router.post("/notifikasi", function (req, res) {
     let orderId = statusResponse.order_id;
     let responseMidtrans = JSON.stringify(statusResponse);
     Payment.findOneAndUpdate(
-      { id: orderId },
       {
         responseMidtrans: responseMidtrans,
-      }
+      },
+      { id: orderId },
     )
       .then(() => {
         res.status(200).send({
